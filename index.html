@@ -1,9 +1,205 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
-    <title>Grela</title>
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#0b0d0f" name="theme-color"/>
+<meta content="Maksymilian Grela, projects, experiments and notes at the intersection of software, AI, automation and physical systems." name="description"/>
+<title>grela.tech, Maksymilian Grela</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet">
+</link></head>
 <body>
-    <h1>Coming soon.</h1>
+<header class="site-header">
+<div class="shell header-inner">
+<a class="wordmark" href="#top">grela.tech</a>
+<nav aria-label="Main navigation" class="nav">
+<a href="#projects">projects</a>
+<a href="#learning">learning</a>
+<a href="#notes">notes</a>
+<a href="#now">now</a>
+</nav>
+<a class="header-link" href="https://github.com/Lavosso" rel="noreferrer" target="_blank">github ↗</a>
+</div>
+</header>
+<main id="top">
+<section class="hero shell">
+<div class="hero-copy">
+<p class="eyebrow">Maksymilian Grela · engineering + software</p>
+<h1>I keep finding things<br/><span>I want to build.</span></h1>
+<p class="hero-text">I study automation and robotics, I am moving into Industry 5.0, and I have a habit of turning random questions into projects. This site is a record of that process.</p>
+<div class="hero-links">
+<a class="text-link primary" href="#projects">see what I'm building ↓</a>
+<a class="text-link" href="#learning">how I learn ↓</a>
+</div>
+</div>
+<aside aria-label="Current focus" class="hero-note">
+<div class="note-head"><span>current state</span><span>09 / 2026</span></div>
+<div class="note-row"><span>20 Under 20</span><b>in progress</b></div>
+<div class="note-row"><span>Daily Modern AI</span><b>day 005</b></div>
+<div class="note-row"><span>Industry 5.0</span><b>starting</b></div>
+<div class="note-row"><span>hardware</span><b>getting interesting</b></div>
+<div class="note-row"><span>Obsidian</span><b>still growing</b></div>
+</aside>
+</section>
+<section class="section shell" id="about">
+<div class="section-meta"><span>01</span><span>a little context</span></div>
+<div class="two-col">
+<div class="copy large">
+<p>I like understanding things by getting my hands on them.</p>
+<p>My interests sit somewhere between software, AI, automation and physical systems. I am deliberately keeping the map wide for now, not because I want to collect technologies, but because I like seeing what happens when different fields start clicking together.</p>
+<p>I learn something, build something, break something, write it down, and then usually find another thing I want to build.</p>
+</div>
+<div class="side-list">
+<div><span>interests</span><strong>AI · software · automation</strong></div>
+<div><span>more recently</span><strong>embedded · hardware · IoT</strong></div>
+<div><span>current obsession</span><strong>interfaces between people and agents</strong></div>
+<div><span>default mode</span><strong>“wait, could I build that?”</strong></div>
+</div>
+</div>
+</section>
+<section class="section shell" id="projects">
+<div class="section-head">
+<div class="section-meta"><span>02</span><span>projects</span></div>
+<p class="section-caption">mostly ideas that refused to stay ideas</p>
+</div>
+<div class="project-grid">
+<article class="project-card featured">
+<div class="project-meta"><span>hardware · AI</span><span class="status">idea</span></div>
+<h3>AI Assistant Ring</h3>
+<p>A tiny physical interface to an AI assistant. Press a button, talk to the phone, let the agent do something useful. The ring is the fun part; the more serious idea is the open interface underneath it.</p>
+<div class="project-foot"><span>BLE · nRF52840 · Android · agents</span><span>button → phone → AI</span></div>
+</article>
+<article class="project-card">
+<div class="project-meta"><span>hardware · security</span><span class="status">idea</span></div>
+<h3>NFC Dorm Lock</h3>
+<p>A small additional lock controlled by NFC. Part security experiment, part embedded project, part excuse to learn how electronics and mechanics behave when you put them on an actual door.</p>
+<div class="project-foot"><span>NFC · MCU · actuator</span><span>bench prototype first</span></div>
+</article>
+<article class="project-card">
+<div class="project-meta"><span>optics · control</span><span class="status">idea</span></div>
+<h3>Focused IR Heater</h3>
+<p>A compact IR heating experiment with thermal feedback. The bit I really want to test is an autofocus loop: move the lens, measure the thermal spot, adjust, repeat.</p>
+<div class="project-foot"><span>IR · optics · thermal camera</span><span>focus → measure → adjust</span></div>
+</article>
+<article class="project-card warm">
+<div class="project-meta"><span>business · e-commerce</span><span class="status">building</span></div>
+<h3>Alisson Rosaries</h3>
+<p>A small real-world business built around handmade rosaries. Domain, Shopify, social media, operations and eventually as much automation as actually makes sense.</p>
+<div class="project-foot"><span>shopify · social · operations</span><span>alisson.pl</span></div>
+</article>
+<article class="project-card shipped">
+<div class="project-meta"><span>software</span><span class="status">shipped</span></div>
+<h3>File Organizer CLI</h3>
+<p>A Python CLI for reorganizing files. It started as a simple utility and became a small lesson in separating logic from side effects, testing the boring parts and designing for reversibility.</p>
+<div class="project-foot"><span>Python · CLI · pytest</span><a href="https://github.com/Lavosso/File_Organizer_CLI" rel="noreferrer" target="_blank">github ↗</a></div>
+</article>
+<article class="project-card shipped">
+<div class="project-meta"><span>software · data</span><span class="status">v0.1</span></div>
+<h3>News Digester Mini</h3>
+<p>A small pipeline for collecting articles, normalizing URLs, deduplicating, filtering, extracting content and turning the result into Markdown.</p>
+<div class="project-foot"><span>Python · scraping · pipelines</span><a href="https://github.com/Lavosso/News_Digester_Mini" rel="noreferrer" target="_blank">github ↗</a></div>
+</article>
+<article class="project-card quiet">
+<div class="project-meta"><span>community</span><span class="status">frozen</span></div>
+<h3>Builder Community</h3>
+<p>A selective community for ambitious IT/AI builders. The actual idea is not another Discord server; it is a dense enough network of people that building together becomes easy.</p>
+<div class="project-foot"><span>people · projects · collaboration</span><span>paused on purpose</span></div>
+</article>
+</div>
+</section>
+<section class="section shell alt" id="learning">
+<div class="section-head">
+<div class="section-meta"><span>03</span><span>learning</span></div>
+<p class="section-caption">the machinery behind the curiosity</p>
+</div>
+<div class="learning-wrap">
+<div class="learning-intro">
+<div>
+<p class="learning-kicker">no single curriculum</p>
+<p class="learning-lead">I am building a broad technical base and letting the different parts collide.</p>
+</div>
+<span class="learning-rule">learn · build · connect</span>
+</div>
+<div class="learning-path">
+<article class="learning-step">
+<div class="learning-marker">01</div>
+<div class="learning-content">
+<div class="learning-top"><span>foundation</span><span>20 Under 20</span></div>
+<h3>Broad IT / AI base</h3>
+<p>Twenty skills across the modern stack. The point is not mastery of everything, just enough understanding to stop every new problem from feeling alien.</p>
+<div class="learning-tags"><span>Python</span><span>Git</span><span>systems</span><span>AI</span></div>
+</div>
+</article>
+<article class="learning-step">
+<div class="learning-marker">02</div>
+<div class="learning-content">
+<div class="learning-top"><span>engineering</span><span>ACiR</span></div>
+<h3>Automation &amp; Robotics</h3>
+<p>Signals, electronics, control, programming and the physical world. The layer where software has to deal with things that can actually move and break.</p>
+<div class="learning-tags"><span>robotics</span><span>control</span><span>electronics</span></div>
+</div>
+</article>
+<article class="learning-step">
+<div class="learning-marker">03</div>
+<div class="learning-content">
+<div class="learning-top"><span>industry</span><span>Industry 5.0</span></div>
+<h3>From systems to production</h3>
+<p>Digitalization, manufacturing, human-centered systems and AI moving out of demos and into real workflows.</p>
+<div class="learning-tags"><span>production</span><span>digitalization</span><span>AI</span></div>
+</div>
+</article>
+<article class="learning-step learning-step-ai">
+<div class="learning-marker">04</div>
+<div class="learning-content">
+<div class="learning-top"><span>ongoing</span><span>Daily Modern AI</span></div>
+<h3>Keep the map moving</h3>
+<p>A daily scan of models, agents, tools and protocols. Not to collect headlines, but to notice when the shape of the field changes.</p>
+<div class="learning-tags"><span>agents</span><span>tools</span><span>research</span></div>
+</div>
+</article>
+</div>
+<div class="principle"><span>working rule</span><p>Learn broadly. Build something. Keep the parts that survive contact with reality.</p></div>
+</div></section>
+<section id="notes" class="section shell">
+      <div class="section-head">
+        <div class="section-meta"><span>04</span><span>notes</span></div>
+        <p class="section-caption">things currently occupying too much RAM</p>
+      </div>
+      <div class="notes-grid">
+        <article class="note-card"><span class="note-type">AI</span><h3>From prompting to agency</h3><p>The interesting jump is not “smarter chat”. It is software getting enough agency to choose tools, observe results and keep going.</p></article>
+        <article class="note-card"><span class="note-type">engineering</span><h3>10× beats 10%</h3><p>Sometimes the best optimization is changing what the system is trying to do rather than polishing the current solution.</p></article>
+        <article class="note-card"><span class="note-type">building</span><h3>Best part is no part</h3><p>Complexity has a cost. Removing a component can be a better engineering decision than making the component better.</p></article>
+        <article class="note-card"><span class="note-type">mindset</span><h3>Try difficult things</h3><p>A recurring thought from my notes: if everything you try works, your experiments might not be ambitious enough.</p></article>
+      </div>
+    </section>
+
+    <section id="now" class="section shell now-section">
+      <div class="section-head">
+        <div class="section-meta"><span>05</span><span>now</span></div>
+        <p class="section-caption">what is actually happening</p>
+      </div>
+      <div class="now-grid">
+        <div><h2>Right now I am trying to get good at moving between layers.</h2></div>
+        <div class="now-copy">
+          <p>Code when the problem is software. Electronics when software is not enough. AI when the workflow can be delegated. Engineering when physics has the final word.</p>
+          <p>Meanwhile: university, work, gym, projects, a growing Obsidian vault and a rather unhealthy number of ideas for small devices.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing shell">
+      <div class="closing-line"></div>
+      <p class="eyebrow">grela.tech</p>
+      <h2>Still early.<br>Still building.</h2>
+      <p class="closing-copy">There is no grand final version yet. I just keep finding the next thing worth understanding.</p>
+      <div class="closing-links"><a href="https://github.com/Lavosso" target="_blank" rel="noreferrer">github ↗</a><a href="mailto:kontakt@grela.tech">kontakt@grela.tech ↗</a></div>
+    </section>
+  </main>
+<footer class="footer shell"><span>grela.tech</span><span>HTML / CSS / JS · GitHub Pages</span></footer>
+<script src="script.js"></script>
 </body>
 </html>
