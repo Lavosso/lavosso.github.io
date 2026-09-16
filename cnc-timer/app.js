@@ -454,7 +454,7 @@ function renderMachine(machine) {
         
         if (subscription) {
           // WAŻNE: Wklej poniżej adres swojego Cloudflare Workera z poprzednich kroków!
-          const WORKER_URL = ' https://cnc-alarm-worker.lavosso.workers.dev'; 
+          const WORKER_URL = '[https://cnc-alarm-worker.lavosso.workers.dev/schedule-timer](https://cnc-alarm-worker.lavosso.workers.dev/schedule-timer)';
           
           // Używamy Math.ceil, aby zaokrąglić do pełnych minut dla Upstash
           const minutesForCloud = Math.ceil(durationData.totalSeconds / 60);
