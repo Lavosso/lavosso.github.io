@@ -31,6 +31,7 @@ const notificationsToggle = document.getElementById('notifications-toggle');
 if (refreshStatusesFromTime()) {
   saveState();
 }
+syncNotificationStateFromPermission();
 renderAll();
 updateNotificationsToggleUi();
 setupNotificationToggle();
@@ -138,6 +139,19 @@ function loadNotificationSettings() {
   }
 }
 
+function syncNotificationStateFromPermission() {
+  if (!('Notification' in window)) {
+    appState.notifications.enabled = false;
+    saveNotificationSettings();
+    return;
+  }
+
+  if (Notification.permission !== 'granted' && appState.notifications.enabled) {
+    appState.notifications.enabled = false;
+    saveNotificationSettings();
+  }
+}
+
 function saveNotificationSettings() {
   localStorage.setItem(NOTIFICATION_STORAGE_KEY, JSON.stringify(appState.notifications));
 }
@@ -210,16 +224,21 @@ function refreshStatusesFromTime() {
       return;
     }
 
-    maybeNotifyWarning(machine, now);
+    if (maybeNotifyWarning(machine, now)) {
+      changed = true;
+    }
 
     if (now >= machine.endTimestamp) {
+      const shouldNotifyCompletion = !machine.completionNotified;
       machine.status = STATUS.FINISHED;
-      if (!machine.completionNotified) {
+      if (shouldNotifyCompletion) {
         showGlobalMessage(`${machine.machineName}: obróbka zakończona.`);
       }
       machine.completionNotified = true;
       machine.warningNotified = true;
-      maybeNotifyCompletion(machine);
+      if (shouldNotifyCompletion) {
+        maybeNotifyCompletion(machine);
+      }
       changed = true;
     }
   });
@@ -340,13 +359,16 @@ function renderMachine(machine) {
     if (machine.status === STATUS.RUNNING && machine.startTimestamp) {
       machine.endTimestamp = machine.startTimestamp + machine.durationSeconds * 1000;
       if (Date.now() >= machine.endTimestamp) {
+        const shouldNotifyCompletion = !machine.completionNotified;
         machine.status = STATUS.FINISHED;
-        if (!machine.completionNotified) {
+        if (shouldNotifyCompletion) {
           showGlobalMessage(`${machine.machineName}: obróbka zakończona.`);
         }
         machine.completionNotified = true;
         machine.warningNotified = true;
-        maybeNotifyCompletion(machine);
+        if (shouldNotifyCompletion) {
+          maybeNotifyCompletion(machine);
+        }
       } else {
         machine.completionNotified = false;
         machine.warningNotified = false;
@@ -538,12 +560,12 @@ function createCycleId(machine) {
 
 function maybeNotifyWarning(machine, now) {
   if (!appState.notifications.enabled || machine.warningNotified || !machine.endTimestamp) {
-    return;
+    return false;
   }
 
   const remainingMs = machine.endTimestamp - now;
   if (remainingMs > 120000 || remainingMs <= 0) {
-    return;
+    return false;
   }
 
   machine.warningNotified = true;
@@ -552,6 +574,7 @@ function maybeNotifyWarning(machine, now) {
     'Zbliża się zakończenie obróbki.',
     `${machine.notificationCycleId || machine.id}-warning`
   );
+  return true;
 }
 
 function maybeNotifyCompletion(machine) {
