@@ -421,7 +421,7 @@ function renderMachine(machine) {
 
   doneBtn.disabled = machine.status !== STATUS.RUNNING;
 
-  startBtn.addEventListener('click', () => {
+  startBtn.addEventListener('click', async () => { // <-- Zmienione na 'async'
     const machineName = machineNameInput.value.trim();
     const partName = partNameInput.value.trim();
     const durationData = parseDuration(durationMinutesInput.value, durationSecondsInput.value);
@@ -445,6 +445,35 @@ function renderMachine(machine) {
     appState.editing[machine.id] = false;
     saveState();
     renderAll();
+    
+    // --- NOWY KOD: WYSYŁANIE TIMERA DO CHMURY ---
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        const subscription = await subscribeToPush();
+        
+        if (subscription) {
+          // WAŻNE: Wklej poniżej adres swojego Cloudflare Workera z poprzednich kroków!
+          const WORKER_URL = ' https://cnc-alarm-worker.lavosso.workers.dev'; 
+          
+          // Używamy Math.ceil, aby zaokrąglić do pełnych minut dla Upstash
+          const minutesForCloud = Math.ceil(durationData.totalSeconds / 60);
+          
+          fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              subscription: subscription,
+              durationMinutes: minutesForCloud, 
+              message: `${machine.machineName}: obróbka zakończona!`
+            })
+          }).catch(err => console.log("Cloud timer skipped:", err));
+        }
+      }
+    } catch (err) {
+      console.error("Push subscription failed:", err);
+    }
+    // --- KONIEC NOWEGO KODU ---
   });
 
   doneBtn.addEventListener('click', () => {
