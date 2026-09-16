@@ -2,14 +2,17 @@
 
 Minimalistyczna aplikacja PWA do pilnowania czasu obróbki na kilku frezarkach CNC jednocześnie.
 
-## Co potrafi (V1)
+## Co potrafi
 
 - 3 domyślne karty maszyn: Frezarka 1, 2 i 3
 - Timer oparty o rzeczywisty czas (`timestamp startu + czas trwania`)
+- Ustawianie czasu obróbki w **minutach i sekundach**
 - Statusy: **GOTOWA / PRACUJE / ZAKOŃCZONA**
-- Duży pozostały czas, procent, progress bar i ETA zakończenia
+- Duży pozostały czas z sekundami (`MM:SS` lub `HH:MM:SS`), procent, progress bar i ETA zakończenia
 - Przyciski: **START / GOTOWE / EDYTUJ / RESET**
 - Trwały stan w `localStorage` (po odświeżeniu i powrocie z tła wszystko się odtwarza)
+- Przełącznik **Powiadomienia: ON/OFF** i lokalne powiadomienia systemowe po zakończeniu cyklu
+- Opcjonalne ostrzeżenie 2 minuty przed końcem cyklu
 - Działanie offline po pierwszym uruchomieniu dzięki Service Worker
 
 ## Struktura
@@ -67,4 +70,6 @@ cnc-timer/
 
 - Timer jest odporny na odświeżenie i przejście aplikacji do tła, bo opiera się na różnicy czasu systemowego.
 - `localStorage` przechowuje pełny stan maszyn.
+- Stary zapis timerów oparty o minuty jest migrowany do nowego formatu z sekundami.
 - Po osiągnięciu zera maszyna przechodzi w status **ZAKOŃCZONA**, karta jest podświetlana, a komunikat jest widoczny na karcie.
+- Powiadomienia nie dublują się dla tego samego cyklu dzięki zapisowi stanu powiadomień w pamięci lokalnej.

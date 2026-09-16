@@ -21,6 +21,9 @@
     <header class="app-header">
       <h1>CNC TIMER</h1>
       <p>Podgląd obróbki na frezarkach</p>
+      <button type="button" id="notifications-toggle" class="notifications-toggle" aria-pressed="false">
+        Powiadomienia: OFF
+      </button>
       <p id="global-message" class="global-message" hidden></p>
     </header>
 
@@ -43,8 +46,13 @@
             <input type="text" class="part-name-input" maxlength="60" placeholder="Np. Korpus A" />
           </label>
           <label>
-            Czas (min)
-            <input type="number" class="duration-input" min="1" max="1440" inputmode="numeric" />
+            Czas obróbki
+            <div class="duration-row">
+              <input type="number" class="duration-minutes-input" min="0" max="1440" inputmode="numeric" />
+              <span class="duration-separator">min</span>
+              <input type="number" class="duration-seconds-input" min="0" max="59" inputmode="numeric" />
+              <span class="duration-separator">sek</span>
+            </div>
           </label>
         </div>
 

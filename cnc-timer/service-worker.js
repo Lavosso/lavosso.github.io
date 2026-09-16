@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cnc-timer-v2';
+const CACHE_NAME = 'cnc-timer-v3';
 const OFFLINE_FILES = [
   './',
   './index.html',
@@ -49,6 +49,23 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => caches.match('./index.html'));
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      const appClient = clientList.find((client) => client.url.includes('/cnc-timer/'));
+      if (appClient && 'focus' in appClient) {
+        return appClient.focus();
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('./');
+      }
+      return null;
     })
   );
 });
