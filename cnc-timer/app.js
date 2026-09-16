@@ -34,14 +34,20 @@ registerServiceWorker();
 
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
-    refreshStatusesFromTime();
-    renderAll();
+    const changed = refreshStatusesFromTime();
+    refreshLivePanels();
+    if (changed) {
+      saveState();
+    }
   }
 });
 
 window.addEventListener('focus', () => {
-  refreshStatusesFromTime();
-  renderAll();
+  const changed = refreshStatusesFromTime();
+  refreshLivePanels();
+  if (changed) {
+    saveState();
+  }
 });
 
 function createMachine(id, machineName) {
@@ -89,7 +95,7 @@ function saveState() {
 function startUiRefresh() {
   setInterval(() => {
     const changed = refreshStatusesFromTime();
-    renderAll();
+    refreshLivePanels();
     if (changed) {
       saveState();
     }
@@ -245,6 +251,38 @@ function renderMachine(machine) {
   durationInput.addEventListener('keydown', stopSubmitBehavior);
 
   return fragment;
+}
+
+function refreshLivePanels() {
+  appState.machines.forEach((machine) => {
+    const card = machinesRoot.querySelector(`[data-machine-id="${machine.id}"]`);
+    if (!card) {
+      return;
+    }
+
+    const statusBadge = card.querySelector('.status-badge');
+    const remainingTimeEl = card.querySelector('.remaining-time');
+    const etaEl = card.querySelector('.eta');
+    const percentEl = card.querySelector('.percentage');
+    const progressBar = card.querySelector('.progress-bar');
+    const finishMessage = card.querySelector('.finish-message');
+    const doneBtn = card.querySelector('.done-btn');
+
+    if (!statusBadge || !remainingTimeEl || !etaEl || !percentEl || !progressBar || !finishMessage || !doneBtn) {
+      return;
+    }
+
+    paintStatus(card, statusBadge, machine.status);
+
+    const timing = getTiming(machine);
+    remainingTimeEl.textContent = timing.remainingLabel;
+    etaEl.textContent = `Koniec: ${timing.endLabel}`;
+    percentEl.textContent = `${timing.percent}%`;
+    progressBar.style.width = `${timing.percent}%`;
+
+    finishMessage.hidden = machine.status !== STATUS.FINISHED;
+    doneBtn.disabled = machine.status !== STATUS.RUNNING;
+  });
 }
 
 function getTiming(machine) {

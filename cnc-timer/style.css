@@ -1,13 +1,14 @@
 :root {
-  color-scheme: light;
-  --bg: #f3f4f6;
-  --card: #ffffff;
-  --text: #111827;
-  --muted: #4b5563;
-  --ready: #2563eb;
-  --running: #16a34a;
-  --finished: #b91c1c;
-  --line: #d1d5db;
+  color-scheme: dark;
+  --bg: #0b0d0f;
+  --panel: #101316;
+  --text: #e7e5df;
+  --muted: #898f8d;
+  --line: #242a2d;
+  --line-strong: #343b3e;
+  --accent: #d5a563;
+  --running: #9bb695;
+  --finished: #c97b7b;
 }
 
 * {
@@ -16,63 +17,67 @@
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
   background: var(--bg);
   color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #0f172a;
-  color: #fff;
+  background: rgb(11 13 15 / 86%);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgb(36 42 45 / 80%);
   padding: 1rem;
-  border-bottom: 2px solid #1e293b;
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: 1.3rem;
-  letter-spacing: 0.1em;
+  font: 600 1.1rem/1.1 Inter, system-ui, sans-serif;
+  letter-spacing: -0.03em;
 }
 
 .app-header p {
   margin: 0.35rem 0 0;
-  font-size: 0.9rem;
-  color: #cbd5e1;
+  color: var(--muted);
+  font: 11px/1.3 "DM Mono", monospace;
+  text-transform: lowercase;
 }
 
 .global-message {
-  margin-top: 0.55rem !important;
-  background: #fef3c7;
-  color: #7c2d12 !important;
-  padding: 0.45rem 0.6rem;
-  border-radius: 8px;
-  font-weight: 700;
+  margin-top: 0.6rem !important;
+  padding: 0.5rem 0.65rem;
+  border-radius: 7px;
+  border: 1px solid var(--line-strong);
+  background: #15120e;
+  color: var(--accent) !important;
+  font: 10px/1.4 "DM Mono", monospace;
+  text-transform: uppercase;
 }
 
 .machines {
-  padding: 0.9rem;
+  padding: 1rem;
   display: grid;
   gap: 0.9rem;
 }
 
 .machine-card {
-  background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  padding: 0.9rem;
-  box-shadow: 0 3px 10px rgb(0 0 0 / 5%);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.95rem;
 }
 
 .machine-card.running {
-  border-color: var(--running);
+  border-color: #486154;
 }
 
 .machine-card.finished {
-  border-color: var(--finished);
-  background: #fef2f2;
+  border-color: #6b4040;
+  background: #121010;
 }
 
 .machine-top {
@@ -84,140 +89,148 @@ body {
 
 .machine-top h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
 }
 
 .status-badge {
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
-  color: #fff;
+  padding: 0.32rem 0.55rem;
+  font: 9px/1 "DM Mono", monospace;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .status-ready {
-  background: var(--ready);
+  color: var(--muted);
 }
 
 .status-running {
-  background: var(--running);
+  color: var(--running);
 }
 
 .status-finished {
-  background: var(--finished);
+  color: var(--finished);
 }
 
 .machine-fields {
-  margin-top: 0.8rem;
+  margin-top: 0.85rem;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 
 .machine-fields label {
-  font-size: 0.8rem;
-  color: var(--muted);
   display: grid;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  color: #7d8482;
+  font: 10px/1.3 "DM Mono", monospace;
+  text-transform: lowercase;
 }
 
 .machine-fields input {
   width: 100%;
+  min-height: 42px;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.6rem;
-  font-size: 1rem;
+  border-radius: 7px;
+  background: #0e1113;
+  color: var(--text);
+  padding: 0.6rem 0.65rem;
+  font: 500 0.95rem/1.3 Inter, system-ui, sans-serif;
+}
+
+.machine-fields input:focus {
+  outline: 2px solid rgb(148 175 191 / 45%);
+  outline-offset: 0;
+  border-color: #4a5a63;
 }
 
 .machine-fields input:disabled {
-  background: #e5e7eb;
-  color: #374151;
+  background: #0c0f11;
+  color: #7f8684;
+  border-style: dashed;
 }
 
 .time-panel {
-  margin-top: 0.9rem;
+  margin-top: 0.95rem;
   text-align: center;
 }
 
 .remaining-time {
   margin: 0;
-  font-size: clamp(2rem, 8vw, 2.8rem);
-  font-weight: 700;
+  font-size: clamp(2rem, 8vw, 2.75rem);
   line-height: 1;
+  letter-spacing: -0.04em;
 }
 
 .eta,
 .percentage {
-  margin: 0.3rem 0 0;
-  font-size: 1rem;
-  font-weight: 700;
+  margin: 0.35rem 0 0;
+  color: #a7adab;
+  font: 10px/1.35 "DM Mono", monospace;
+  text-transform: uppercase;
 }
 
 .progress-wrap {
   margin-top: 0.9rem;
   width: 100%;
-  height: 20px;
-  border-radius: 999px;
+  height: 14px;
   border: 1px solid var(--line);
+  border-radius: 999px;
   overflow: hidden;
-  background: #e5e7eb;
+  background: #0c0f11;
 }
 
 .progress-bar {
   width: 0%;
   height: 100%;
-  background: linear-gradient(90deg, #22c55e, #16a34a);
+  background: linear-gradient(90deg, #7f9980, #9bb695);
   transition: width 0.4s linear;
 }
 
 .finish-message {
   margin: 0.8rem 0 0;
   text-align: center;
-  font-weight: 700;
   color: var(--finished);
+  font: 10px/1.3 "DM Mono", monospace;
+  text-transform: uppercase;
 }
 
 .actions {
-  margin-top: 0.9rem;
+  margin-top: 0.95rem;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
 }
 
 .btn {
-  border: none;
-  border-radius: 10px;
-  padding: 0.75rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
+  min-height: 42px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: #171c1f;
+  color: var(--text);
+  padding: 0.65rem 0.55rem;
+  font: 500 10px/1 "DM Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .btn-primary {
-  background: #2563eb;
+  border-color: #55646c;
 }
 
 .btn-success {
-  background: #16a34a;
-  min-height: 48px;
+  border-color: #4f6855;
 }
 
 .btn-secondary {
-  background: #4b5563;
+  border-color: #464d50;
 }
 
 .btn-danger {
-  background: #dc2626;
-}
-
-@media (max-width: 420px) {
-  .btn {
-    padding: 0.7rem 0.55rem;
-    font-size: 0.86rem;
-  }
+  border-color: #644141;
 }

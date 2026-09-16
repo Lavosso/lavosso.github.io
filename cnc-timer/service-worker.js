@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cnc-timer-v1';
+const CACHE_NAME = 'cnc-timer-v2';
 const OFFLINE_FILES = [
   './',
   './index.html',
