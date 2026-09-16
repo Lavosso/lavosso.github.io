@@ -744,3 +744,35 @@ async function registerServiceWorker() {
     console.error('Błąd rejestracji Service Workera:', error);
   }
 }
+
+const PUBLIC_VAPID_KEY = 'BFHGB_pqFyHFuCxiGYgrb-ZxxKH7OtEeVim5qHt0aGzmOA_ZnSM6h3CCPEiZQlMyr_EqqTmNe81VG2EYKIraGM0'; 
+
+// Browser utility to convert the base64 VAPID key to a Uint8Array
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+// Subscribes the user to Push Notifications
+async function subscribeToPush() {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        const registration = await navigator.serviceWorker.ready;
+        let subscription = await registration.pushManager.getSubscription();
+        
+        if (!subscription) {
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
+            });
+        }
+        return subscription;
+    }
+    console.error("Push notifications are not supported in this browser.");
+    return null;
+}
