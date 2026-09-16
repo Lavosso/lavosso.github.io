@@ -47,6 +47,19 @@ body {
   text-transform: lowercase;
 }
 
+.notifications-toggle {
+  margin-top: 0.6rem;
+  min-height: 36px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #14191c;
+  color: var(--text);
+  padding: 0.4rem 0.7rem;
+  font: 500 10px/1 "DM Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .global-message {
   margin-top: 0.6rem !important;
   padding: 0.5rem 0.65rem;
@@ -149,6 +162,19 @@ body {
   background: #0c0f11;
   color: #7f8684;
   border-style: dashed;
+}
+
+.duration-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.duration-separator {
+  color: #7d8482;
+  font: 10px/1 "DM Mono", monospace;
+  text-transform: uppercase;
 }
 
 .time-panel {

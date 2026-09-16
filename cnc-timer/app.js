@@ -4,6 +4,7 @@
 */
 
 const STORAGE_KEY = 'cncTimerStateV1';
+const NOTIFICATION_STORAGE_KEY = 'cncTimerNotificationsV1';
 const STATUS = {
   READY: 'GOTOWA',
   RUNNING: 'PRACUJE',
@@ -18,17 +19,21 @@ const DEFAULT_MACHINES = [
 
 const appState = {
   machines: loadState(),
-  editing: {}
+  editing: {},
+  notifications: loadNotificationSettings()
 };
 
 const machinesRoot = document.getElementById('machines');
 const machineTemplate = document.getElementById('machine-template');
 const globalMessage = document.getElementById('global-message');
+const notificationsToggle = document.getElementById('notifications-toggle');
 
 if (refreshStatusesFromTime()) {
   saveState();
 }
 renderAll();
+updateNotificationsToggleUi();
+setupNotificationToggle();
 startUiRefresh();
 registerServiceWorker();
 
@@ -55,11 +60,14 @@ function createMachine(id, machineName) {
     id,
     machineName,
     partName: '',
+    durationSeconds: 30 * 60,
     durationMinutes: 30,
     status: STATUS.READY,
     startTimestamp: null,
     endTimestamp: null,
-    completionNotified: false
+    completionNotified: false,
+    warningNotified: false,
+    notificationCycleId: null
   };
 }
 
@@ -75,13 +83,35 @@ function loadState() {
       return cloneDefaultMachines();
     }
 
-    return parsed.map((machine, index) => ({
-      ...createMachine(`m${index + 1}`, `Frezarka ${index + 1}`),
-      ...machine
-    }));
+    return parsed.map((machine, index) => normalizeMachine(machine, index));
   } catch {
     return cloneDefaultMachines();
   }
+}
+
+function normalizeMachine(machine, index) {
+  const normalized = {
+    ...createMachine(`m${index + 1}`, `Frezarka ${index + 1}`),
+    ...machine
+  };
+
+  const durationSecondsFromState = Number(machine?.durationSeconds);
+  const durationMinutesFromState = Number(machine?.durationMinutes);
+
+  if (Number.isFinite(durationSecondsFromState) && durationSecondsFromState > 0) {
+    normalized.durationSeconds = Math.round(durationSecondsFromState);
+  } else if (Number.isFinite(durationMinutesFromState) && durationMinutesFromState > 0) {
+    normalized.durationSeconds = Math.round(durationMinutesFromState * 60);
+  } else {
+    normalized.durationSeconds = 30 * 60;
+  }
+
+  normalized.durationMinutes = Math.floor(normalized.durationSeconds / 60);
+  normalized.completionNotified = Boolean(normalized.completionNotified);
+  normalized.warningNotified = Boolean(normalized.warningNotified);
+  normalized.notificationCycleId = normalized.notificationCycleId || null;
+
+  return normalized;
 }
 
 function cloneDefaultMachines() {
@@ -90,6 +120,75 @@ function cloneDefaultMachines() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.machines));
+}
+
+function loadNotificationSettings() {
+  try {
+    const raw = localStorage.getItem(NOTIFICATION_STORAGE_KEY);
+    if (!raw) {
+      return { enabled: false };
+    }
+
+    const parsed = JSON.parse(raw);
+    return {
+      enabled: Boolean(parsed?.enabled)
+    };
+  } catch {
+    return { enabled: false };
+  }
+}
+
+function saveNotificationSettings() {
+  localStorage.setItem(NOTIFICATION_STORAGE_KEY, JSON.stringify(appState.notifications));
+}
+
+function setupNotificationToggle() {
+  if (!notificationsToggle) {
+    return;
+  }
+
+  notificationsToggle.addEventListener('click', async () => {
+    if (appState.notifications.enabled) {
+      appState.notifications.enabled = false;
+      saveNotificationSettings();
+      updateNotificationsToggleUi();
+      showGlobalMessage('Powiadomienia wyłączone.');
+      return;
+    }
+
+    if (!('Notification' in window)) {
+      showGlobalMessage('Ta przeglądarka nie obsługuje powiadomień.');
+      return;
+    }
+
+    let permission = Notification.permission;
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+
+    if (permission !== 'granted') {
+      appState.notifications.enabled = false;
+      saveNotificationSettings();
+      updateNotificationsToggleUi();
+      showGlobalMessage('Brak zgody na powiadomienia.');
+      return;
+    }
+
+    appState.notifications.enabled = true;
+    saveNotificationSettings();
+    updateNotificationsToggleUi();
+    showGlobalMessage('Powiadomienia włączone.');
+  });
+}
+
+function updateNotificationsToggleUi() {
+  if (!notificationsToggle) {
+    return;
+  }
+
+  const enabled = appState.notifications.enabled;
+  notificationsToggle.textContent = `Powiadomienia: ${enabled ? 'ON' : 'OFF'}`;
+  notificationsToggle.setAttribute('aria-pressed', String(enabled));
 }
 
 function startUiRefresh() {
@@ -111,12 +210,16 @@ function refreshStatusesFromTime() {
       return;
     }
 
+    maybeNotifyWarning(machine, now);
+
     if (now >= machine.endTimestamp) {
       machine.status = STATUS.FINISHED;
       if (!machine.completionNotified) {
         showGlobalMessage(`${machine.machineName}: obróbka zakończona.`);
       }
       machine.completionNotified = true;
+      machine.warningNotified = true;
+      maybeNotifyCompletion(machine);
       changed = true;
     }
   });
@@ -138,7 +241,8 @@ function renderMachine(machine) {
   const statusBadge = fragment.querySelector('.status-badge');
   const machineNameInput = fragment.querySelector('.machine-name-input');
   const partNameInput = fragment.querySelector('.part-name-input');
-  const durationInput = fragment.querySelector('.duration-input');
+  const durationMinutesInput = fragment.querySelector('.duration-minutes-input');
+  const durationSecondsInput = fragment.querySelector('.duration-seconds-input');
   const remainingTimeEl = fragment.querySelector('.remaining-time');
   const etaEl = fragment.querySelector('.eta');
   const percentEl = fragment.querySelector('.percentage');
@@ -153,12 +257,16 @@ function renderMachine(machine) {
   nameDisplay.textContent = machine.machineName;
   machineNameInput.value = machine.machineName;
   partNameInput.value = machine.partName;
-  durationInput.value = machine.durationMinutes;
+
+  const durationParts = splitDuration(machine.durationSeconds);
+  durationMinutesInput.value = durationParts.minutes;
+  durationSecondsInput.value = durationParts.seconds;
 
   const isEditing = Boolean(appState.editing[machine.id]);
   machineNameInput.disabled = !isEditing;
   partNameInput.disabled = !isEditing;
-  durationInput.disabled = !isEditing;
+  durationMinutesInput.disabled = !isEditing;
+  durationSecondsInput.disabled = !isEditing;
   editBtn.textContent = isEditing ? 'ZAPISZ' : 'EDYTUJ';
 
   paintStatus(card, statusBadge, machine.status);
@@ -177,20 +285,23 @@ function renderMachine(machine) {
   startBtn.addEventListener('click', () => {
     const machineName = machineNameInput.value.trim();
     const partName = partNameInput.value.trim();
-    const durationMinutes = Number(durationInput.value);
+    const durationData = parseDuration(durationMinutesInput.value, durationSecondsInput.value);
 
-    if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) {
-      alert('Podaj poprawny czas obróbki w minutach.');
+    if (!durationData.ok) {
+      alert(durationData.error);
       return;
     }
 
     machine.machineName = machineName || machine.machineName;
     machine.partName = partName;
-    machine.durationMinutes = Math.round(durationMinutes);
+    machine.durationSeconds = durationData.totalSeconds;
+    machine.durationMinutes = Math.floor(durationData.totalSeconds / 60);
     machine.startTimestamp = Date.now();
-    machine.endTimestamp = machine.startTimestamp + machine.durationMinutes * 60 * 1000;
+    machine.endTimestamp = machine.startTimestamp + machine.durationSeconds * 1000;
     machine.status = STATUS.RUNNING;
     machine.completionNotified = false;
+    machine.warningNotified = false;
+    machine.notificationCycleId = createCycleId(machine);
 
     appState.editing[machine.id] = false;
     saveState();
@@ -202,6 +313,8 @@ function renderMachine(machine) {
     machine.startTimestamp = null;
     machine.endTimestamp = null;
     machine.completionNotified = false;
+    machine.warningNotified = false;
+    machine.notificationCycleId = null;
     saveState();
     renderAll();
   });
@@ -213,22 +326,31 @@ function renderMachine(machine) {
       return;
     }
 
-    const durationMinutes = Number(durationInput.value);
-    if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) {
-      alert('Czas obróbki musi być większy od 0.');
+    const durationData = parseDuration(durationMinutesInput.value, durationSecondsInput.value);
+    if (!durationData.ok) {
+      alert(durationData.error);
       return;
     }
 
     machine.machineName = machineNameInput.value.trim() || machine.machineName;
     machine.partName = partNameInput.value.trim();
-    machine.durationMinutes = Math.round(durationMinutes);
+    machine.durationSeconds = durationData.totalSeconds;
+    machine.durationMinutes = Math.floor(durationData.totalSeconds / 60);
 
     if (machine.status === STATUS.RUNNING && machine.startTimestamp) {
-      machine.endTimestamp = machine.startTimestamp + machine.durationMinutes * 60 * 1000;
+      machine.endTimestamp = machine.startTimestamp + machine.durationSeconds * 1000;
       if (Date.now() >= machine.endTimestamp) {
         machine.status = STATUS.FINISHED;
-        showGlobalMessage(`${machine.machineName}: obróbka zakończona.`);
+        if (!machine.completionNotified) {
+          showGlobalMessage(`${machine.machineName}: obróbka zakończona.`);
+        }
         machine.completionNotified = true;
+        machine.warningNotified = true;
+        maybeNotifyCompletion(machine);
+      } else {
+        machine.completionNotified = false;
+        machine.warningNotified = false;
+        machine.notificationCycleId = createCycleId(machine);
       }
     }
 
@@ -242,13 +364,16 @@ function renderMachine(machine) {
     machine.startTimestamp = null;
     machine.endTimestamp = null;
     machine.completionNotified = false;
+    machine.warningNotified = false;
+    machine.notificationCycleId = null;
     saveState();
     renderAll();
   });
 
   machineNameInput.addEventListener('keydown', stopSubmitBehavior);
   partNameInput.addEventListener('keydown', stopSubmitBehavior);
-  durationInput.addEventListener('keydown', stopSubmitBehavior);
+  durationMinutesInput.addEventListener('keydown', stopSubmitBehavior);
+  durationSecondsInput.addEventListener('keydown', stopSubmitBehavior);
 
   return fragment;
 }
@@ -293,7 +418,7 @@ function getTiming(machine) {
     const completedRatio = Math.min(1, (totalMs - remainingMs) / totalMs);
 
     return {
-      remainingLabel: formatMsToMinSec(remainingMs),
+      remainingLabel: formatRemainingTime(remainingMs),
       endLabel: formatClock(machine.endTimestamp),
       percent: Math.round(completedRatio * 100)
     };
@@ -334,11 +459,51 @@ function paintStatus(card, badge, status) {
   badge.classList.add('status-ready');
 }
 
-function formatMsToMinSec(milliseconds) {
+function parseDuration(minutesRaw, secondsRaw) {
+  const minutes = Number(minutesRaw);
+  const seconds = Number(secondsRaw);
+
+  if (!Number.isFinite(minutes) || minutes < 0 || minutes > 1440) {
+    return { ok: false, error: 'Podaj poprawne minuty (0-1440).' };
+  }
+
+  if (!Number.isFinite(seconds) || seconds < 0 || seconds > 59) {
+    return { ok: false, error: 'Sekundy muszą mieć wartość od 0 do 59.' };
+  }
+
+  const normalizedMinutes = Math.floor(minutes);
+  const normalizedSeconds = Math.floor(seconds);
+  const totalSeconds = normalizedMinutes * 60 + normalizedSeconds;
+
+  if (totalSeconds <= 0) {
+    return { ok: false, error: 'Czas obróbki musi być większy od 0.' };
+  }
+
+  return { ok: true, totalSeconds };
+}
+
+function splitDuration(totalSeconds) {
+  const safeTotal = Number.isFinite(totalSeconds) && totalSeconds > 0 ? Math.round(totalSeconds) : 0;
+  const minutes = Math.floor(safeTotal / 60);
+  const seconds = safeTotal % 60;
+
+  return {
+    minutes,
+    seconds
+  };
+}
+
+function formatRemainingTime(milliseconds) {
   const totalSec = Math.ceil(milliseconds / 1000);
-  const min = Math.floor(totalSec / 60);
-  const sec = totalSec % 60;
-  return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  const hours = Math.floor(totalSec / 3600);
+  const minutes = Math.floor((totalSec % 3600) / 60);
+  const seconds = totalSec % 60;
+
+  if (hours > 0) {
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 function formatClock(timestamp) {
@@ -365,6 +530,64 @@ function showGlobalMessage(message) {
   window.setTimeout(() => {
     globalMessage.hidden = true;
   }, 4500);
+}
+
+function createCycleId(machine) {
+  return `${machine.id}-${machine.startTimestamp}-${machine.endTimestamp}`;
+}
+
+function maybeNotifyWarning(machine, now) {
+  if (!appState.notifications.enabled || machine.warningNotified || !machine.endTimestamp) {
+    return;
+  }
+
+  const remainingMs = machine.endTimestamp - now;
+  if (remainingMs > 120000 || remainingMs <= 0) {
+    return;
+  }
+
+  machine.warningNotified = true;
+  void showSystemNotification(
+    `${machine.machineName}: 2 minuty do końca`,
+    'Zbliża się zakończenie obróbki.',
+    `${machine.notificationCycleId || machine.id}-warning`
+  );
+}
+
+function maybeNotifyCompletion(machine) {
+  if (!appState.notifications.enabled) {
+    return;
+  }
+
+  void showSystemNotification(
+    'Cykl zakończony',
+    `${machine.machineName} zakończyła obróbkę`,
+    `${machine.notificationCycleId || machine.id}-done`
+  );
+}
+
+async function showSystemNotification(title, body, tag) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    return;
+  }
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.showNotification(title, {
+        body,
+        tag,
+        renotify: false,
+        icon: './icons/icon-192.png',
+        badge: './icons/icon-192.png'
+      });
+      return;
+    }
+
+    new Notification(title, { body, tag });
+  } catch (error) {
+    console.error('Błąd powiadomienia:', error);
+  }
 }
 
 async function registerServiceWorker() {
