@@ -122,6 +122,12 @@ startUiRefresh();
 registerServiceWorker();
 
 document.addEventListener('visibilitychange', () => {
+    saveDebugState({
+        visibilityEvent: Date.now(),
+        lastVisibility: document.visibilityState,
+    });
+
+    updateDebugPanel();
   if (!document.hidden) {
     const changed = refreshStatusesFromTime();
     refreshLivePanels();
@@ -130,7 +136,35 @@ document.addEventListener('visibilitychange', () => {
     }
   }
 });
+window.addEventListener('pagehide', () => {
+    saveDebugState({
+        pagehide: Date.now(),
+    });
+});
 
+window.addEventListener('pageshow', () => {
+    saveDebugState({
+        pageshow: Date.now(),
+    });
+
+    updateDebugPanel();
+});
+
+window.addEventListener('freeze', () => {
+    saveDebugState({
+        freeze: Date.now(),
+    });
+
+    updateDebugPanel();
+});
+
+window.addEventListener('resume', () => {
+    saveDebugState({
+        resume: Date.now(),
+    });
+
+    updateDebugPanel();
+});
 window.addEventListener('focus', () => {
   const changed = refreshStatusesFromTime();
   refreshLivePanels();
@@ -289,13 +323,16 @@ function updateNotificationsToggleUi() {
 }
 
 function startUiRefresh() {
-  setInterval(() => {
-    const changed = refreshStatusesFromTime();
-    refreshLivePanels();
-    if (changed) {
-      saveState();
-    }
-  }, 1000);
+    setInterval(() => {
+        debugTick();
+
+        const changed = refreshStatusesFromTime();
+        refreshLivePanels();
+
+        if (changed) {
+            saveState();
+        }
+    }, 1000);
 }
 
 function refreshStatusesFromTime() {
