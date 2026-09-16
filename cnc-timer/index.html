@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="Minimalistyczny timer CNC dla wielu frezarek." />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <title>CNC Timer</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>CNC TIMER</h1>
+      <p>Podgląd obróbki na frezarkach</p>
+      <p id="global-message" class="global-message" hidden></p>
+    </header>
+
+    <main id="machines" class="machines" aria-live="polite"></main>
+
+    <template id="machine-template">
+      <section class="machine-card" data-machine-id="">
+        <header class="machine-top">
+          <h2 class="machine-name-display"></h2>
+          <span class="status-badge"></span>
+        </header>
+
+        <div class="machine-fields">
+          <label>
+            Nazwa maszyny
+            <input type="text" class="machine-name-input" maxlength="40" />
+          </label>
+          <label>
+            Detal
+            <input type="text" class="part-name-input" maxlength="60" placeholder="Np. Korpus A" />
+          </label>
+          <label>
+            Czas (min)
+            <input type="number" class="duration-input" min="1" max="1440" inputmode="numeric" />
+          </label>
+        </div>
+
+        <div class="time-panel">
+          <p class="remaining-time">--:--</p>
+          <p class="eta">Koniec: --:--</p>
+          <p class="percentage">0%</p>
+        </div>
+
+        <div class="progress-wrap" aria-label="Postęp obróbki">
+          <div class="progress-bar"></div>
+        </div>
+
+        <p class="finish-message" hidden>Obróbka zakończona</p>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary start-btn">START</button>
+          <button type="button" class="btn btn-success done-btn">GOTOWE</button>
+          <button type="button" class="btn btn-secondary edit-btn">EDYTUJ</button>
+          <button type="button" class="btn btn-danger reset-btn">RESET</button>
+        </div>
+      </section>
+    </template>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
