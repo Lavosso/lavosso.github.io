@@ -5,6 +5,89 @@
 
 const STORAGE_KEY = 'cncTimerStateV1';
 const NOTIFICATION_STORAGE_KEY = 'cncTimerNotificationsV1';
+const DEBUG_MODE = new URLSearchParams(window.location.search).has('debug');
+const DEBUG_STORAGE_KEY = 'cncTimerDebugV1';
+
+function debugState() {
+    try {
+        return JSON.parse(localStorage.getItem(DEBUG_STORAGE_KEY)) || {};
+    } catch {
+        return {};
+    }
+}
+
+function saveDebugState(patch) {
+    const current = debugState();
+
+    localStorage.setItem(
+        DEBUG_STORAGE_KEY,
+        JSON.stringify({
+            ...current,
+            ...patch,
+        })
+    );
+}
+
+function updateDebugPanel() {
+    if (!DEBUG_MODE) {
+        return;
+    }
+
+    let panel = document.getElementById('cnc-debug-panel');
+
+    if (!panel) {
+        panel = document.createElement('pre');
+        panel.id = 'cnc-debug-panel';
+
+        Object.assign(panel.style, {
+            position: 'fixed',
+            left: '8px',
+            right: '8px',
+            bottom: '8px',
+            zIndex: '99999',
+            margin: '0',
+            padding: '10px',
+            borderRadius: '8px',
+            background: '#111',
+            color: '#fff',
+            font: '12px monospace',
+            whiteSpace: 'pre-wrap',
+            maxHeight: '220px',
+            overflow: 'auto',
+        });
+
+        document.body.appendChild(panel);
+    }
+
+    const state = debugState();
+    const now = Date.now();
+
+    panel.textContent = [
+        'CNC TIMER DEBUG',
+        `Now: ${new Date(now).toLocaleTimeString()}`,
+        `Last JS tick: ${state.lastTick ? new Date(state.lastTick).toLocaleTimeString() : '—'}`,
+        `Last visibility: ${state.lastVisibility || '—'}`,
+        `Tick count: ${state.tickCount || 0}`,
+        `Last gap: ${state.lastGapMs != null ? `${state.lastGapMs} ms` : '—'}`,
+        `Document hidden: ${document.hidden}`,
+    ].join('\n');
+}
+
+function debugTick() {
+    const now = Date.now();
+    const state = debugState();
+
+    const gap = state.lastTick ? now - state.lastTick : 0;
+
+    saveDebugState({
+        lastTick: now,
+        lastGapMs: gap,
+        lastVisibility: document.visibilityState,
+        tickCount: (state.tickCount || 0) + 1,
+    });
+
+    updateDebugPanel();
+}
 const STATUS = {
   READY: 'GOTOWA',
   RUNNING: 'PRACUJE',
