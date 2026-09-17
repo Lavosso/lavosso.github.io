@@ -344,10 +344,6 @@ function refreshStatusesFromTime() {
       return;
     }
 
-    if (maybeNotifyWarning(machine, now)) {
-      changed = true;
-    }
-
     if (now >= machine.endTimestamp) {
       const shouldNotifyCompletion = !machine.completionNotified;
       machine.status = STATUS.FINISHED;
@@ -356,9 +352,6 @@ function refreshStatusesFromTime() {
       }
       machine.completionNotified = true;
       machine.warningNotified = true;
-      if (shouldNotifyCompletion) {
-        maybeNotifyCompletion(machine);
-      }
       changed = true;
     }
   });
@@ -446,34 +439,41 @@ function renderMachine(machine) {
     saveState();
     renderAll();
     
-    // --- NOWY KOD: WYSYŁANIE TIMERA DO CHMURY ---
+    // --- WYSYŁANIE TIMERA DO CHMURY ---
     try {
       const permission = await Notification.requestPermission();
+    
       if (permission === 'granted') {
         const subscription = await subscribeToPush();
-        
+    
         if (subscription) {
-          // WAŻNE: Wklej poniżej adres swojego Cloudflare Workera z poprzednich kroków!
-          const WORKER_URL = 'https://cnc-alarm-worker.lavosso.workers.dev/schedule-timer';
-          
-          // Używamy Math.ceil, aby zaokrąglić do pełnych minut dla Upstash
-          const minutesForCloud = Math.ceil(durationData.totalSeconds / 60);
-          
-          fetch(WORKER_URL, {
+          const WORKER_URL =
+            'https://cnc-alarm-worker.lavosso.workers.dev/schedule-timer';
+    
+          const durationSeconds = durationData.totalSeconds;
+    
+          const response = await fetch(WORKER_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-              subscription: subscription,
-              durationMinutes: minutesForCloud, 
-              message: `${machine.machineName}: obróbka zakończona!`
+              subscription,
+              durationSeconds,
+              message: `${machine.machineName}: obróbka zakończona!`,
+              warningMessage: `${machine.machineName}: 2 minuty do końca`
             })
-          }).catch(err => console.log("Cloud timer skipped:", err));
+          });
+    
+          if (!response.ok) {
+            throw new Error(`Cloud timer HTTP ${response.status}`);
+          }
         }
       }
     } catch (err) {
-      console.error("Push subscription failed:", err);
+      console.error('Push scheduling failed:', err);
     }
-    // --- KONIEC NOWEGO KODU ---
+// --- KONIEC WYSYŁANIA TIMERA DO CHMURY ---
   });
 
   doneBtn.addEventListener('click', () => {
