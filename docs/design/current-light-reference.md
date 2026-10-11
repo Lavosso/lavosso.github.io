@@ -1,0 +1,164 @@
+# Current light reference
+
+Read: 2026-10-11. Source commit: 7e01f4c2625861b65ba633678539b6e565605002.
+URLs: https://grela.tech/ and https://grela.tech/styles.css. This reference records the local source before edits; render verification is recorded separately.
+
+Exact sources: current-light.css, current-light.html, current-light.js in this directory. These preserve every declaration, including overrides, hardcoded colors, rgba and gradients.
+
+## Tokens and actual roles
+
+| Token | Value | Use |
+| --- | --- | --- |
+| --bg | #f1e6d7 | body background |
+| --panel | #f7efe3 | declared, unused |
+| --panel2 | #f3e9dd | learning surface and markers; .alt |
+| --text | #395b50 | body foreground |
+| --muted | #426a5a | navigation, labels and text links |
+| --line | #b9c7cd | section/card/row borders |
+| --line2 | #94afbf | side-list top border |
+| --accent | #7a6263 | hover, current-state values |
+| --cool | #94afbf | declared, unused |
+| --green | #426a5a | hero emphasis, primary link, section index, note type |
+| --warm | #dcc5b4 | declared, unused |
+| --max | 1160px | shell width |
+
+## Layout and component guide
+
+Manrope 400/500/600/700, Space Mono 400/700 loaded from Google Fonts. Body 1.65 line height; all sizes, weights, tracking and component variants appear in the declaration inventory below. Header sticky, min-height 72px, blur 18px, translucent background. Shell max 1160px, gutters 24px (14px below 620px). Hero 112px/92px vertical padding, 1.35fr/.65fr, gap 72px. Sections 92px vertical padding (70px mobile). Hero heading clamp(54px,7.5vw,104px), .98 line height, -.055em tracking; mobile 52px.
+
+Header: .site-header/.header-inner/.nav. Hero: .hero/.hero-text/.hero-links. Current state: .hero-note/.note-row. Projects: .project-grid/.project-card and featured/warm/shipped/quiet variants. Learning: #learning.alt/.learning-step/.learning-marker/.learning-tags. Notes: .notes-grid/.note-card. Footer: .footer; closing: .closing.
+
+Cards: 18px radius, 25px padding, two columns with 14px gap; featured spans two. Current-state/notes radius 14px; learning 22px; marker circular; tags pill. Project hover translates -1px with 10px/28px shadow and .2s transition. Anchor hover uses accent. No explicit keyboard focus or reduced-motion rules in source; browser default focus applies. Status shipped green, other status mauve, quiet opacity .92. Gradients and exact hardcoded colors are enumerated below.
+
+Breakpoints 900px and 620px. Navigation disappears below 900px. Later .notes-grid and .now-grid declarations override earlier media rules of equal specificity: notes remains four columns, now two columns on mobile. This is a source audit; computed styles will be recorded if a browser can run.
+
+## Restore appearance while keeping new content
+
+Use the saved CSS and font link as reference, or retrieve styles.css and the font link from the source commit with git show. Apply styling to current markup; do not restore the old index wholesale. Keep current accessibility and mobile fixes. Saved HTML is a technical reference, not linked from the public portfolio.
+
+## Complete declaration inventory
+
+Includes font shorthands, focus/hover behavior, spacing, transitions, all colors and rule order. Media-context details are in the exact saved CSS.
+
+| Selector | Declarations |
+| --- | --- |
+| `:root` | `--bg:#f1e6d7;--panel:#f7efe3;--panel2:#f3e9dd;--text:#395b50;--muted:#426a5a;--line:#b9c7cd;--line2:#94afbf;--accent:#7a6263;--cool:#94afbf;--green:#426a5a;--warm:#dcc5b4;--max:1160px` |
+| `*` | `box-sizing:border-box` |
+| `html` | `scroll-behavior:smooth` |
+| `body` | `margin:0;background:var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased` |
+| `a` | `color:inherit;text-decoration:none` |
+| `a:hover` | `color:var(--accent)` |
+| `.shell` | `width:min(var(--max),calc(100% - 48px));margin:0 auto` |
+| `.site-header` | `position:sticky;top:0;z-index:20;background:rgba(241,230,215,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(57,91,80,.2)` |
+| `.header-inner` | `min-height:72px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px` |
+| `.wordmark` | `font:700 15px "Space Mono",monospace` |
+| `.nav` | `display:flex;gap:24px;font:700 13px/1 "Space Mono",monospace;color:var(--muted)` |
+| `.nav a` | `padding:10px 0` |
+| `.header-link` | `justify-self:end;font:700 13px "Space Mono",monospace;color:var(--muted)` |
+| `.eyebrow,.section-meta,.section-caption,.project-meta,.project-foot,.note-head,.note-row,.note-type,.principle span` | `font-family:"Space Mono",monospace` |
+| `.hero` | `padding:112px 0 92px;display:grid;grid-template-columns:1.35fr .65fr;gap:72px;align-items:end` |
+| `.eyebrow` | `margin:0 0 25px;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.025em;text-transform:lowercase` |
+| `.hero h1` | `margin:0;font-size:clamp(54px,7.5vw,104px);line-height:.98;letter-spacing:-.055em;font-weight:700` |
+| `.hero h1 span` | `color:var(--green)` |
+| `.hero-text` | `max-width:720px;margin:28px 0 0;color:#4f6b61;font-size:19px;line-height:1.75` |
+| `.hero-links` | `display:flex;gap:24px;margin-top:34px` |
+| `.text-link` | `font:700 13px "Space Mono",monospace;color:var(--muted)` |
+| `.text-link.primary` | `color:var(--green)` |
+| `.hero-note` | `border:1px solid rgba(57,91,80,.24);border-radius:14px;padding:14px 16px;background:linear-gradient(160deg,rgba(148,175,191,.24),rgba(122,98,99,.14))` |
+| `.note-head` | `display:flex;justify-content:space-between;color:#5f7d84;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:5px` |
+| `.note-row` | `display:grid;grid-template-columns:1fr auto;gap:12px;padding:11px 0;border-top:1px solid rgba(57,91,80,.18);font-size:11px;font-weight:700` |
+| `.note-row b` | `font-weight:700;color:var(--accent)` |
+| `.section` | `padding:92px 0;border-top:1px solid var(--line)` |
+| `.section-meta` | `display:flex;gap:14px;align-items:baseline;color:var(--muted);font-size:11px;font-weight:700;text-transform:lowercase` |
+| `.section-meta span:first-child` | `color:var(--green)` |
+| `.section-head` | `display:flex;justify-content:space-between;align-items:baseline;gap:24px;margin-bottom:20px` |
+| `.section-caption` | `margin:0;color:#5f7d84;font-size:10px;font-weight:700` |
+| `.two-col` | `display:grid;grid-template-columns:1fr 1fr;gap:72px` |
+| `.copy.large` | `font-size:24px;line-height:1.5;letter-spacing:-.02em` |
+| `.copy.large p` | `margin:0 0 22px` |
+| `.side-list` | `border-top:1px solid var(--line2)` |
+| `.side-list>div` | `display:grid;grid-template-columns:130px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);font-size:13px` |
+| `.side-list span` | `color:#5f7d84;font:700 11px "Space Mono",monospace;text-transform:uppercase` |
+| `.side-list strong` | `font-weight:600;color:#395b50` |
+| `.project-grid` | `display:grid;grid-template-columns:repeat(2,1fr);gap:14px` |
+| `.project-card` | `background:linear-gradient(150deg,rgba(148,175,191,.3),rgba(231,229,223,.94));border:1px solid var(--line);border-radius:18px;padding:25px;min-height:290px;display:flex;flex-direction:column;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease` |
+| `.project-card:hover` | `transform:translateY(-1px);border-color:#7c98a6;box-shadow:0 10px 28px rgba(57,91,80,.16)` |
+| `.project-card.featured` | `grid-column:span 2;min-height:340px;background:linear-gradient(160deg,rgba(148,175,191,.45),rgba(66,106,90,.16))` |
+| `.project-card.warm` | `background:linear-gradient(155deg,rgba(122,98,99,.3),rgba(231,229,223,.9))` |
+| `.project-card.shipped .status` | `color:#426a5a` |
+| `.project-card.quiet` | `opacity:.92` |
+| `.project-meta` | `display:flex;justify-content:space-between;color:#5f7d84;font-size:10px;font-weight:500;text-transform:uppercase` |
+| `.status` | `color:#7a6263` |
+| `.project-card h3` | `margin:34px 0 14px;font-size:clamp(25px,2.8vw,36px);line-height:1.08;letter-spacing:-.04em;font-weight:600` |
+| `.project-card p` | `margin:0;color:#4f6b61;max-width:770px;font-size:15px` |
+| `.project-foot` | `margin-top:auto;padding-top:28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:14px;color:#5f7d84;font-size:10px;font-weight:500` |
+| `.alt` | `background:var(--panel2)` |
+| `#learning.alt` | `background:linear-gradient(165deg,rgba(148,175,191,.26),rgba(66,106,90,.14));border:1px solid var(--line);border-radius:22px;padding-left:34px;padding-right:34px;overflow:hidden` |
+| `.learning-wrap` | `margin-top:8px;padding:34px 0 18px;border:0;border-radius:0;background:transparent;overflow:visible` |
+| `.learning-intro` | `display:flex;justify-content:space-between;align-items:flex-end;gap:36px;margin:0 0 28px` |
+| `.learning-kicker` | `margin:0 0 8px;color:#5f7d84;font:700 10px "Space Mono",monospace;text-transform:uppercase;letter-spacing:.04em` |
+| `.learning-lead` | `margin:0;max-width:720px;color:#4f6b61;font-size:19px;line-height:1.6` |
+| `.learning-rule` | `flex:none;color:#5f7d84;font:700 10px "Space Mono",monospace;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap` |
+| `.learning-path` | `position:relative;display:grid;gap:0;padding:4px 0` |
+| `.learning-path::before` | `content:"";position:absolute;left:24px;top:16px;bottom:16px;width:1px;background:#94afbf` |
+| `.learning-step` | `position:relative;display:grid;grid-template-columns:74px 1fr;gap:26px;padding:24px 0` |
+| `.learning-step+.learning-step` | `border-top:1px solid var(--line)` |
+| `.learning-marker` | `position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid rgba(57,91,80,.35);border-radius:50%;background:var(--panel2);color:#7a6263;font:700 11px "Space Mono",monospace` |
+| `.learning-content` | `min-width:0;max-width:840px` |
+| `.learning-top` | `display:flex;justify-content:space-between;gap:16px;color:#5f7d84;font:700 9px "Space Mono",monospace;text-transform:uppercase;letter-spacing:.03em` |
+| `.learning-content h3` | `margin:13px 0 8px;font-size:23px;line-height:1.1;letter-spacing:-.03em` |
+| `.learning-content p` | `margin:0;color:#4f6b61;font-size:14px;line-height:1.7;max-width:760px` |
+| `.learning-tags` | `display:flex;flex-wrap:wrap;gap:6px;margin-top:16px` |
+| `.learning-tags span` | `padding:5px 8px;border:1px solid rgba(57,91,80,.35);border-radius:999px;color:#4f6b61;font:700 9px "Space Mono",monospace;text-transform:uppercase` |
+| `.learning-step-ai .learning-marker` | `background:#d8cdc6` |
+| `.learning-step-ai .learning-content h3` | `color:#395b50` |
+| `.learning-wrap .principle` | `margin:16px -34px 0;padding:24px 34px 0;border-top:1px solid var(--line);background:linear-gradient(180deg,rgba(66,106,90,.13),transparent)` |
+| `.learning-wrap .principle p` | `margin:0` |
+| `.header-inner` | `grid-template-columns:1fr auto` |
+| `.nav` | `display:none` |
+| `.hero,.two-col,.now-grid` | `grid-template-columns:1fr;gap:46px` |
+| `.project-card.featured` | `grid-column:span 1` |
+| `.notes-grid` | `grid-template-columns:repeat(2,1fr)` |
+| `.shell` | `width:min(var(--max),calc(100% - 28px))` |
+| `.hero` | `padding:76px 0 66px` |
+| `.hero h1` | `font-size:52px` |
+| `.hero-text` | `font-size:16px` |
+| `.section` | `padding:70px 0` |
+| `.project-grid,.notes-grid` | `grid-template-columns:1fr` |
+| `.project-card` | `min-height:255px` |
+| `.project-card h3` | `margin-top:28px` |
+| `.project-foot` | `flex-direction:column` |
+| `#learning.alt` | `padding-left:22px;padding-right:22px` |
+| `.learning-wrap` | `padding:24px 0 16px` |
+| `.learning-step` | `grid-template-columns:58px 1fr;gap:18px;padding:22px 0` |
+| `.learning-path::before` | `left:20px` |
+| `.learning-wrap .principle` | `margin-left:0;margin-right:0;padding-left:0;padding-right:0` |
+| `.learning-marker` | `width:40px;height:40px` |
+| `.learning-intro` | `flex-direction:column;align-items:flex-start;gap:12px` |
+| `.learning-rule` | `white-space:normal` |
+| `.principle` | `grid-template-columns:1fr;gap:8px` |
+| `.section-head` | `align-items:flex-start;flex-direction:column;gap:5px` |
+| `.closing` | `padding-bottom:80px` |
+| `.footer` | `padding:18px 0;flex-direction:column;align-items:flex-start;gap:5px` |
+| `.copy.large` | `font-size:21px` |
+| `/* merged non-learning styles from v7 */
+.notes-grid` | `display:grid;grid-template-columns:repeat(4,1fr);gap:24px` |
+| `.note-card` | `border:1px solid var(--line);border-radius:14px;padding:18px;background:linear-gradient(155deg,rgba(148,175,191,.26),rgba(231,229,223,.94))` |
+| `.note-type` | `color:var(--green);font-size:10px;font-weight:700;text-transform:uppercase` |
+| `.note-card h3` | `margin:17px 0 11px;font-size:18px;line-height:1.16;letter-spacing:-.02em` |
+| `.note-card p` | `margin:0;color:#4f6b61;font-size:14px` |
+| `.now-section` | `padding-bottom:72px` |
+| `.now-grid` | `display:grid;grid-template-columns:1fr 1fr;gap:72px` |
+| `.now-section h2` | `margin:0;font-size:clamp(34px,4.3vw,58px);line-height:1.05;letter-spacing:-.045em;font-weight:600` |
+| `.now-copy` | `color:#48655a;font-size:17px` |
+| `.now-copy p` | `margin:0 0 20px` |
+| `.closing` | `padding:64px 0 112px` |
+| `.closing-line` | `height:1px;background:var(--line);margin-bottom:56px` |
+| `.closing h2` | `margin:0 0 22px;font-size:clamp(50px,6.2vw,86px);line-height:1;letter-spacing:-.065em` |
+| `.closing-copy` | `max-width:590px;color:#4f6b61;font-size:16px` |
+| `.closing-links` | `display:flex;gap:24px;margin-top:28px;font:700 12px "Space Mono",monospace;color:var(--green)` |
+| `.footer` | `min-height:70px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:#5f7d84;font:700 10px "Space Mono",monospace` |
+
+## Browser verification
+
+Chromium rendered saved pre-change sources at 360×900, 390×900, 768×900 and 1440×900. Full-page references: light-360.png, light-390.png, light-768.png, light-1440.png. At 360/390px document scrollWidth was 566px; notes computed four columns and nav was hidden. At 768px notes still had four columns and now two. The cascade regression is confirmed by browser measurements, not only source inspection. Screenshot light-390.png was visually inspected. See browser-checks.json.
