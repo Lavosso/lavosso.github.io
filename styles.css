@@ -34,3 +34,304 @@ html{scroll-padding-top:100px;scroll-behavior:auto}a,summary{touch-action:manipu
 @media(max-width:900px){.header-inner{grid-template-columns:1fr auto;gap:4px 20px;padding-top:12px}.nav{display:flex;grid-row:2;grid-column:1/-1;justify-content:space-between;gap:12px}.hero,.two-col,.now-grid{grid-template-columns:1fr;gap:36px}.notes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.project-card.featured{grid-column:1/-1}.hero{padding-top:72px}.project-foot{flex-direction:column}.hero-note{max-width:520px;width:100%}}
 @media(max-width:620px){.project-grid,.notes-grid{grid-template-columns:minmax(0,1fr)}.hero h1{font-size:clamp(42px,11vw,62px);letter-spacing:-.055em}.hero{padding:58px 0}.hero-text{font-size:17px}.project-card{padding:20px;min-height:0}.project-card.featured{min-height:0}.hero-links{gap:16px}.learning-step{grid-template-columns:40px minmax(0,1fr);gap:14px}.learning-content h3{font-size:22px;line-height:1.2}.side-list>div{grid-template-columns:100px minmax(0,1fr)}.note-row{font-size:11px}.copy.large{font-size:21px}.section{padding-top:64px;padding-bottom:64px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}.project-card:hover{transform:none}}
+
+/* Blue phosphor palette and open page layout */
+:root {
+  --bg: #0c1220;
+  --panel: #111d32;
+  --panel2: #101a2c;
+  --text: #e3efff;
+  --muted: #a5badd;
+  --line: #2b4163;
+  --line-strong: #4a668e;
+  --accent: #d1daa5;
+  --cool: #8cc8ff;
+  --green: #8cc8ff;
+  --warm: #182138;
+  --secondary: #c4d5ed;
+  --focus: #d5efff;
+  --phosphor-glow: 0 0 20px #77bfff40;
+}
+
+body {
+  background:
+    url("thermal-violet-seafoam.png") center top / max(100%, 640px) 1200px repeat-y,
+    var(--bg) url("thermal-dither.png") center top / max(100%, 640px) 1200px repeat-y;
+}
+
+.site-header {
+  background: #0c1220ed;
+  border-bottom: 0;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cool);
+  text-shadow: var(--phosphor-glow);
+}
+
+.wordmark::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+  box-shadow: 0 0 10px #84caffaa;
+}
+
+.hero {
+  padding: clamp(48px, 8vw, 116px) 0 0;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+.hero-portrait {
+  display: block;
+  width: min(100%, 420px);
+  height: auto;
+  justify-self: center;
+}
+
+.hero .eyebrow,
+.note-head,
+.section-meta span:first-child,
+.learning-marker {
+  color: var(--cool);
+}
+
+.hero h1,
+.closing h2 {
+  font-family: "DM Mono", monospace;
+  font-weight: 500;
+  text-shadow: var(--phosphor-glow);
+}
+
+.hero h1 {
+  font-size: clamp(36px, 4.25vw, 52px);
+  font-weight: 700;
+  letter-spacing: -.075em;
+  line-height: 1.04;
+}
+
+.hero h1 span {
+  color: inherit;
+}
+
+.hero-text {
+  max-width: 55ch;
+}
+
+.hero-note {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px 20px;
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.note-head {
+  grid-column: 1 / -1;
+}
+
+.note-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 0;
+  padding: 0;
+  overflow-wrap: anywhere;
+}
+
+.note-row b {
+  text-align: left;
+  color: var(--muted);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 7px 11px;
+  border: 1px solid var(--line-strong);
+  background: #101f36;
+}
+
+.text-link.primary {
+  color: #102139;
+  background: var(--cool);
+  border-color: var(--cool);
+  box-shadow: var(--phosphor-glow);
+}
+
+.text-link:hover,
+.text-link.primary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg);
+}
+
+.section-meta h2,
+.group-title,
+.project-card h3,
+.learning-content h3,
+.note-card h3,
+.now-grid h2,
+.principle h3,
+.explorations summary {
+  font-family: "DM Mono", monospace;
+  letter-spacing: -.045em;
+}
+
+.section-meta h2,
+.now-section .section-meta h2 {
+  font-size: clamp(20px, 3vw, 30px);
+}
+
+#about .section-meta {
+  margin-bottom: 20px;
+}
+
+.section,
+.explorations,
+.footer,
+.side-list,
+.side-list > div,
+.learning-step + .learning-step,
+.learning-wrap .principle,
+.project-foot,
+.status {
+  border: 0;
+}
+
+.section {
+  padding-block: clamp(46px, 6vw, 84px);
+}
+
+.section-head {
+  margin-bottom: 28px;
+}
+
+.project-grid,
+.notes-grid {
+  column-gap: clamp(24px, 5vw, 68px);
+  row-gap: 36px;
+}
+
+.project-card,
+.project-card.featured,
+.project-card.warm,
+.note-card,
+#learning.alt {
+  min-height: 0;
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+}
+
+.project-card,
+.note-card {
+  padding-block: 0;
+}
+
+.project-card:hover {
+  transform: none;
+}
+
+.status {
+  padding: 0;
+}
+
+.project-card h3 {
+  margin-top: 12px;
+}
+
+.project-foot {
+  padding-top: 0;
+}
+
+.closing-line {
+  display: none;
+}
+
+.explorations summary {
+  color: var(--cool);
+}
+
+.closing h2 {
+  color: var(--cool);
+}
+
+@media (max-width: 900px) {
+  html {
+    scroll-padding-top: 120px;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 52px);
+  }
+}
+
+@media (max-width: 620px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-portrait {
+    width: min(82%, 300px);
+  }
+
+  .hero-note {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 14px;
+  }
+
+  .hero-links {
+    gap: 8px;
+  }
+}
+
+.hero-portrait {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+}
+
+.hero-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, #378f78 8%, #457bb8 48%, #8254b6 88%);
+  mask: url("portrait-crt-outlined.webp") center / 100% 100% no-repeat;
+  mix-blend-mode: color;
+  opacity: .68;
+}
+
+.hero-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@supports (background-clip: text) {
+  @media (forced-colors: none) {
+    .hero h1,
+    .closing h2,
+    .section-meta h2,
+    .project-card h3 {
+      background: conic-gradient(#88a9ce 25%, currentColor 0 50%, #88a9ce 0 75%, currentColor 0) 0 0 / 2px 2px;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero h1,
+    .closing h2 {
+      text-shadow: 0 0 16px #77bfff26;
+    }
+  }
+}
