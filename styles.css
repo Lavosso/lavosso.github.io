@@ -45,6 +45,9 @@ html{scroll-padding-top:100px;scroll-behavior:auto}a,summary{touch-action:manipu
   --line: #2b4163;
   --line-strong: #4a668e;
   --accent: #a8ccf3;
+  --signal: #FFB347;
+  --signal-outline: color-mix(in srgb, var(--signal) 72%, transparent);
+  --signal-glow: 0 0 16px color-mix(in srgb, var(--signal) 24%, transparent);
   --cool: #8cc8ff;
   --green: #8cc8ff;
   --warm: #182138;
@@ -62,6 +65,15 @@ body {
 .site-header {
   background: #0c1220ed;
   border-bottom: 0;
+}
+
+.nav a:is(:hover, :focus-visible, [aria-current="location"]) {
+  color: var(--signal);
+}
+
+.nav a[aria-current="location"] {
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
 
 .wordmark {
@@ -176,16 +188,24 @@ body {
 
 .text-link.primary {
   color: #102139;
-  background: var(--cool);
-  border-color: var(--cool);
-  box-shadow: var(--phosphor-glow);
+  background: var(--signal);
+  border-color: var(--signal);
+  box-shadow: var(--signal-glow);
 }
 
-.text-link:hover,
-.text-link.primary:hover {
+.text-link:hover {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--bg);
+}
+
+.text-link.primary:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.text-link.primary:focus-visible {
+  outline-color: var(--signal);
 }
 
 .section-meta h2,
@@ -827,11 +847,16 @@ body {
   width: 100%;
   height: auto;
   mask-image: radial-gradient(ellipse closest-side, black 89%, transparent 117%);
+}
+
+.hero-portrait,
+.gear-art,
+.arkhe-feature-art img {
   filter:
-    drop-shadow(1px 0 0 #91bee980)
-    drop-shadow(-1px 0 0 #91bee980)
-    drop-shadow(0 1px 0 #91bee980)
-    drop-shadow(0 -1px 0 #91bee980);
+    drop-shadow(1px 0 0 var(--signal-outline))
+    drop-shadow(-1px 0 0 var(--signal-outline))
+    drop-shadow(0 1px 0 var(--signal-outline))
+    drop-shadow(0 -1px 0 var(--signal-outline));
 }
 
 .arkhe-feature-art figcaption {
@@ -975,8 +1000,12 @@ body {
   font-size: 14px;
 }
 
+.arkhe-operational,
 .arkhe-experimental {
-  color: #d6baf1;
+  color: var(--signal);
+}
+
+.arkhe-experimental {
   font: 11px "DM Mono", monospace;
 }
 
@@ -1005,7 +1034,7 @@ body {
 .arkhe-gui img {
   width: 100%;
   height: auto;
-  border: 1px solid #779ad877;
+  border: 1px solid var(--signal-outline);
 }
 
 .arkhe-gui figcaption {
